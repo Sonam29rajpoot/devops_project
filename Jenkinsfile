@@ -1,15 +1,22 @@
 pipeline {
     agent any
-
+    
     stages {
         stage('Build') {
             steps {
-                sh 'sudo Docker build . -t todo-app'
+                sh 'docker build -t myapp .'
             }
         }
-        stage('deploy') {
+        
+        stage('Test') {
             steps {
-                sh 'sudo docker run -p 8000:8000 -d todo-app'
+                sh 'docker run myapp python manage.py test'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh 'docker run -d -p 8000:8000 myapp python manage.py runserver 0.0.0.0:8000'
             }
         }
     }
